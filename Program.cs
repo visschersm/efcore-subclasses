@@ -1,6 +1,4 @@
-﻿
-// See https://aka.ms/new-console-template for more information
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 Console.WriteLine("Hello, World!");
 
@@ -15,7 +13,11 @@ public class ProductContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(properties => properties.Id);
-            entity.OwnsOne(properties => properties.Limits);
+            entity.OwnsOne(properties => properties.Limits, b =>
+            {
+                b.Property(e => e.MinWeight);
+                b.Property(e => e.MaxWeight);
+            });
         });
     }
 
@@ -25,26 +27,25 @@ public class ProductContext : DbContext
 
 public class PhysicalLimits
 {
-    public int MinWeight { get; /*private*/ set; } = 0;
-    public int MaxWeight { get; /*private*/ set; } = 2000;
+    public int MinWeight { get; private set; } = 0;
+    public int MaxWeight { get; private set; } = 2000;
 
-    //public PhysicalLimits(int minWeight, int maxWeight) => (MinWeight, MaxWeight) = (minWeight, maxWeight);
+    public PhysicalLimits(int minWeight, int maxWeight) => (MinWeight, MaxWeight) = (minWeight, maxWeight);
 }
 
 public class Product
 {
-    public int Id { get; /*private*/ set; }
-    public PhysicalLimits Limits { get; /*private*/ set; }
+    public int Id { get; private set; }
+    public PhysicalLimits Limits { get; private set; }
 
-    /*public Product(int id, PhysicalLimits limits)
+    public Product()
+    {
+
+    }
+
+    public Product(int id, PhysicalLimits limits)
     {
         Id = id;
         Limits = limits;
     }
-
-    public Product(int id, int minWeight, int maxWeight)
-    {
-        Id = id;
-        Limits = new PhysicalLimits(minWeight, maxWeight);
-    }*/
 }
